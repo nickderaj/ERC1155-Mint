@@ -1,0 +1,38 @@
+{
+  "name": "contract",
+  "version": "1.0.0",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.ts --network mainnet",
+    "verify": "hardhat verify --network mainnet 0x3167d6A11d859656e5921A595568C2BCbF80742F",
+    "deploy-stg": "hardhat run scripts/deploy.ts --network testnet",
+    "verify-stg": "hardhat verify --network testnet 0x15BE8054F30e1cA8bA7767AbC4a44E159d23a450"
+  },
+  "author": "Nicholas De Raj",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.1",
+    "dotenv": "^16.1.4",
+    "hardhat": "^2.15.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^1.0.0",
+    "@typechain/ethers-v6": "^0.4.0",
+    "@typechain/hardhat": "^8.0.0",
+    "@types/chai": "^4.2.0",
+    "@types/mocha": ">=9.1.0",
+    "@types/node": ">=12.0.0",
+    "chai": "^4.2.0",
+    "ethers": "^6.4.0",
+    "hardhat-gas-reporter": "^1.0.8",
+    "solidity-coverage": "^0.8.0",
+    "ts-node": ">=8.0.0",
+    "typechain": "^8.1.0",
+    "typescript": ">=4.5.0"
+  }
+}

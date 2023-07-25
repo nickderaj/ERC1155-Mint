@@ -1,6 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
+import { sampleUri } from "../util/constants";
 
 describe("Mint", function () {
   // Fixture:
@@ -8,9 +9,7 @@ describe("Mint", function () {
     const [owner] = await ethers.getSigners();
 
     const Mint = await ethers.getContractFactory("Mint");
-    const mint = await Mint.deploy(
-      "https://ipfs.io/ipfs/QmPUBhCe53ZkuqZweYtPnaBpiCz9AsusuopbDWN5dKoDcZ/"
-    );
+    const mint = await Mint.deploy(sampleUri);
 
     if (withBalance) {
       await network.provider.send("hardhat_setBalance", [
@@ -47,6 +46,8 @@ describe("Mint", function () {
 
     it("Should have a set base uri function", async function () {
       const { mint } = await loadFixture(deployContract);
+      expect(await mint.baseUri()).to.equal(sampleUri);
+
       await mint.setBaseUri("https://example.com/");
       expect(await mint.baseUri()).to.equal("https://example.com/");
     });

@@ -1,8 +1,9 @@
 import { ethers } from "hardhat";
+import { sampleUri } from "../util/constants";
 
 async function main() {
   const timestamp = Math.round(Date.now() / 1000);
-  const contract = await ethers.deployContract("Mint");
+  const contract = await ethers.deployContract("Mint", [sampleUri]);
   await contract.waitForDeployment();
 
   console.log(

@@ -30,18 +30,14 @@ describe("Mint", function () {
       const { mint } = await loadFixture(deployContract);
       const arr = await mint.getTokenTypes();
 
-      expect(arr).to.eql([0n, 1n, 2n]);
+      expect(arr).to.eql([1n]);
     });
 
     it("Should have minted the right number of each NFT", async function () {
       const { mint } = await loadFixture(deployContract);
       const arr = await mint.getMintedTokens();
 
-      expect(arr).to.eql([
-        1000000000000000000n,
-        1000000000000000000000000000n,
-        1n,
-      ]);
+      expect(arr).to.eql([0n]);
     });
 
     it("Should have a set base uri function", async function () {
@@ -76,7 +72,7 @@ describe("Mint", function () {
       const balance = await mint.balanceOf(owner, 1);
       await mint.setPrice(1, 999999999999);
 
-      expect(mint.mint(owner, 1, 10)).to.be.revertedWith("Insufficient funds.");
+      expect(mint.mint(owner, 1, 0)).to.be.revertedWith("Insufficient funds.");
       expect(await mint.balanceOf(owner, 1)).to.equal(balance + 0n);
     });
 
@@ -112,27 +108,17 @@ describe("Mint", function () {
       const { mint, owner } = await loadFixture(deployContract);
 
       await mint.addTokenType(1000000n, 0, true);
-      expect(await mint.getTokenTypes()).to.eql([0n, 1n, 2n, 3n]);
-      expect(await mint.getMintedTokens()).to.eql([
-        1000000000000000000n,
-        1000000000000000000000000000n,
-        1n,
-        1000000n,
-      ]);
-      expect(await mint.mint(owner, 3, 10)).to.not.be.reverted;
+      expect(await mint.getTokenTypes()).to.eql([1n, 2n]);
+      expect(await mint.getMintedTokens()).to.eql([0n, 1000000n]);
+      expect(await mint.mint(owner, 1, 10)).to.not.be.reverted;
     });
 
     it("Should not be able to mint new type that has canMint set to false", async function () {
       const { mint, owner } = await loadFixture(deployContract);
 
       await mint.addTokenType(0, 0, false);
-      expect(await mint.getTokenTypes()).to.eql([0n, 1n, 2n, 3n]);
-      expect(await mint.getMintedTokens()).to.eql([
-        1000000000000000000n,
-        1000000000000000000000000000n,
-        1n,
-        0n,
-      ]);
+      expect(await mint.getTokenTypes()).to.eql([1n, 2n]);
+      expect(await mint.getMintedTokens()).to.eql([0n, 0n]);
       expect(mint.mint(owner, 3, 10)).to.be.revertedWith(
         "Minting not allowed for this token type."
       );
@@ -150,7 +136,7 @@ describe("Mint", function () {
     });
 
     it("Should not transfer if the contract is empty", async function () {
-      const { mint, owner } = await loadFixture(deployContract);
+      const { mint } = await loadFixture(deployContract);
 
       await expect(mint.withdrawAll()).to.be.revertedWith(
         "No funds available for withdrawal."

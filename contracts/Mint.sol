@@ -14,24 +14,26 @@ contract Mint is ERC1155, Ownable {
 
     constructor(string memory _baseUri) ERC1155(_baseUri) {
         baseUri = _baseUri;
-        addTokenType(10**18, 0, true); // id: 1, with 10^18 tokens minted
-        addTokenType(10**27, 0, true); // id: 2, with 10^27 tokens minted
-        addTokenType(1, 0, true);      // id: 3, with 1 token minted
+        addTokenType(0, 0, true); // id: 1, 0 tokens minted, price: 0, minting permission: true
     }
 
     function addTokenType(uint256 initialSupply, uint256 price, bool mintPermission) public onlyOwner {
-        uint256 typeId = tokenTypes.length;
+        uint256 typeId = tokenTypes.length + 1;
         tokenTypes.push(typeId);
         mintedTokens.push(initialSupply);
-        tokenPrices[typeId] = price; // Set the token price
-        canMint[typeId] = mintPermission; // Set the minting permission
+        tokenPrices[typeId - 1] = price; // Set the token price
+        canMint[typeId - 1] = mintPermission; // Set the minting permission
+
+        if (initialSupply == 0) {
+            return;
+        }
         _mint(msg.sender, typeId, initialSupply, "");
     }
 
     function mint(address toAddress, uint256 typeId, uint256 amount) public payable {
         require(typeId > 0 && typeId <= tokenTypes.length, "Token type doesn't exist.");
-        require(canMint[typeId], "Minting not allowed for this token type.");
-        require(msg.value >= tokenPrices[typeId], "Insufficient funds.");
+        require(canMint[typeId - 1], "Minting not allowed for this token type.");
+        require(msg.value >= tokenPrices[typeId - 1], "Insufficient funds.");
         _mint(toAddress, typeId, amount, "");
         mintedTokens[typeId - 1] += amount;
     }
@@ -42,12 +44,12 @@ contract Mint is ERC1155, Ownable {
 
     function setPrice(uint256 typeId, uint256 newPrice) public onlyOwner {
         require(typeId > 0 && typeId <= tokenTypes.length, "Token type doesn't exist.");
-        tokenPrices[typeId] = newPrice;
+        tokenPrices[typeId - 1] = newPrice;
     }
 
     function toggleMintPermission(uint256 typeId) public onlyOwner {
         require(typeId > 0 && typeId <= tokenTypes.length, "Token type doesn't exist.");
-        canMint[typeId] = !canMint[typeId]; // Toggle the minting permission
+        canMint[typeId - 1] = !canMint[typeId - 1]; // Toggle the minting permission
     }
 
     function getTokenTypes() external view returns (uint256[] memory) {
